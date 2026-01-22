@@ -1,1 +1,3 @@
-# 32-bit_RISC-V_Processor
+# RISC-V_CPU
+
+MIT License
