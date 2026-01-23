@@ -53,12 +53,10 @@ This repository aims to provide a clean, modular, and extensible RISC-V CPU base
 ---
 
 License
-
 This project is licensed under the MIT License.
 See the LICENSE file for details.
 
 Maintainer
-
 Arjun P Shetty
 Open to collaboration, mentorship, and community contributions.
 
