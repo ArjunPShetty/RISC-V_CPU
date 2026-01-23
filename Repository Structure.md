@@ -7,326 +7,357 @@ RISC-V_CPU/
 ├── README.md
 ├── CONTRIBUTING.md
 ├── CODE_OF_CONDUCT.md
-├── SECURITY.md
 ├── .gitignore
-├── .gitattributes
 ├── Makefile
 │
-├── rtl/                              # RTL Design (Mandatory)
+├── rtl/                              # RTL Design (Verilog Only)
 │   ├── top/
-│   │   ├── riscv_top.v
-│   │   └── riscv_top_params.vh
+│   │   ├── riscv_core.v              # Top-level CPU core
+│   │   ├── riscv_soc.v               # System-on-Chip (optional)
+│   │   └── riscv_top.v               # Top with peripherals
 │   │
 │   ├── core/
-│   │   ├── if_stage.v                # Instruction Fetch
-│   │   ├── id_stage.v                # Instruction Decode
-│   │   ├── ex_stage.v                # Execute
-│   │   ├── mem_stage.v               # Memory
-│   │   ├── wb_stage.v                # Write Back
-│   │   ├── control_unit.v            # Main Control
-│   │   ├── hazard_unit.v             # Pipeline Hazard Control
-│   │   ├── forwarding_unit.v         # Data Forwarding
-│   │   ├── branch_unit.v             # Branch Prediction/Resolution
-│   │   └── pipeline_regs.v           # Pipeline Registers
+│   │   ├── riscv_pipeline.v          # Main pipeline wrapper
+│   │   ├── fetch_stage.v             # Instruction fetch
+│   │   ├── decode_stage.v            # Instruction decode
+│   │   ├── execute_stage.v           # Execute
+│   │   ├── memory_stage.v            # Memory access
+│   │   ├── writeback_stage.v         # Write back
+│   │   ├── pipeline_ctrl.v           # Pipeline control
+│   │   ├── hazard_ctrl.v             # Hazard detection
+│   │   ├── forward_unit.v            # Data forwarding
+│   │   └── branch_unit.v             # Branch handling
 │   │
-│   ├── alu/
+│   ├── execution/
 │   │   ├── alu.v                     # Arithmetic Logic Unit
-│   │   ├── alu_control.v
-│   │   ├── multiplier.v              # Optional: Hardware multiplier
-│   │   ├── divider.v                 # Optional: Hardware divider
-│   │   └── shifter.v                 # Barrel shifter
+│   │   ├── alu_ctrl.v                # ALU control
+│   │   ├── mul_div_unit.v            # Multiply/Divide (optional)
+│   │   ├── shifter.v                 # Barrel shifter
+│   │   └── compare_unit.v            # Comparison unit
 │   │
 │   ├── regfile/
-│   │   ├── register_file.v           # Register File (32x32)
-│   │   └── register_file_banked.v    # Optional: Banked for better timing
+│   │   ├── register_file.v           # 32x32 register file
+│   │   └── regfile_forward.v         # Register forwarding
 │   │
 │   ├── decode/
-│   │   ├── instruction_decoder.v
-│   │   ├── imm_generator.v           # Immediate Generator
-│   │   └── decoder_utils.v
+│   │   ├── decoder.v                 # Instruction decoder
+│   │   ├── imm_gen.v                 # Immediate generator
+│   │   └── csr_addr_decode.v         # CSR address decode
 │   │
 │   ├── memory/
-│   │   ├── icache.v                  # Instruction Cache
-│   │   │   ├── icache_ctrl.v
-│   │   │   └── icache_mem.v
-│   │   │
-│   │   ├── dcache.v                  # Data Cache
-│   │   │   ├── dcache_ctrl.v
-│   │   │   └── dcache_mem.v
-│   │   │
-│   │   ├── memory_interface.v        # Memory Bus Interface
-│   │   ├── mmu.v                     # Memory Management Unit
-│   │   ├── tlb.v                     # Translation Lookaside Buffer
-│   │   └── bus/
-│   │       ├── axi_interface.v       # AXI4 Interface
-│   │       ├── ahb_interface.v       # AHB Interface
-│   │       └── wishbone_interface.v  # Wishbone Interface
+│   │   ├── data_mem_if.v             # Data memory interface
+│   │   ├── instr_mem_if.v            # Instruction memory interface
+│   │   ├── cache/
+│   │   │   ├── cache_controller.v    # Cache controller
+│   │   │   ├── cache_sram.v          # Cache memory
+│   │   │   └── cache_tags.v          # Tag memory
+│   │   ├── bus/
+│   │   │   ├── wishbone_if.v         # Wishbone interface
+│   │   │   ├── axi_lite_if.v         # AXI-Lite interface
+│   │   │   └── bus_arbiter.v         # Bus arbiter
+│   │   └── mmu/
+│   │       ├── mmu.v                 # Memory Management Unit
+│   │       └── tlb.v                 # Translation Lookaside Buffer
 │   │
 │   ├── csr/
 │   │   ├── csr_file.v                # Control & Status Registers
-│   │   ├── csr_registers.v           # CSR definitions
-│   │   └── interrupt_controller.v    # Interrupt Controller
+│   │   ├── csr_regs.v                # CSR register definitions
+│   │   ├── interrupt_ctrl.v          # Interrupt controller
+│   │   └── timer_unit.v              # Timer unit
 │   │
 │   ├── debug/
-│   │   ├── debug_module.v            # RISC-V Debug Module
-│   │   └── jtag_tap.v                # JTAG TAP Controller
+│   │   ├── debug_module.v            # Debug module
+│   │   └── jtag_dtm.v                # JTAG Debug Transport Module
 │   │
 │   ├── common/
-│   │   ├── defines.vh                # Global definitions
-│   │   ├── parameters.vh             # Global parameters
-│   │   ├── typedefs.svh              # SystemVerilog types
+│   │   ├── defines.v                 # Global definitions
+│   │   ├── config.v                  # Configuration parameters
 │   │   ├── muxes.v                   # Multiplexers
-│   │   ├── synchronizers.v           # CDC synchronizers
-│   │   └── reset_sync.v              # Reset synchronizer
+│   │   ├── flipflops.v               # Flip-flop collections
+│   │   ├── sync_reset.v              # Reset synchronizer
+│   │   └── clock_gating.v            # Clock gating cells
 │   │
-│   └── peripherals/                  # Optional: Built-in peripherals
-│       ├── uart.v
-│       ├── gpio.v
-│       ├── timer.v
+│   └── peripherals/                  # On-chip peripherals
+│       ├── uart/
+│       │   ├── uart_core.v
+│       │   ├── uart_tx.v
+│       │   └── uart_rx.v
+│       ├── gpio/
+│       │   ├── gpio_core.v
+│       │   └── gpio_pads.v
+│       ├── spi/
+│       │   ├── spi_master.v
+│       │   └── spi_slave.v
 │       └── plic.v                    # Platform-Level Interrupt Controller
 │
-├── verification/                     # Verification (Mandatory)
-│   ├── tb/
-│   │   ├── top_tb.sv                 # Top-level testbench
-│   │   ├── alu_tb.sv
-│   │   ├── regfile_tb.sv
-│   │   ├── decoder_tb.sv
-│   │   ├── cache_tb.sv
-│   │   ├── csr_tb.sv
-│   │   └── bus_tb.sv
+├── verification/                     # Verification (Verilog TBs)
+│   ├── testbench/
+│   │   ├── tb_top.v                  # Top-level testbench
+│   │   ├── tb_memory.v               # Memory model
+│   │   ├── tb_peripherals.v          # Peripheral models
+│   │   ├── tb_monitor.v              # Monitor
+│   │   ├── tb_checker.v              # Checker/Scoreboard
+│   │   └── tb_driver.v               # Test driver
 │   │
 │   ├── tests/
-│   │   ├── riscv_isa/                # RISC-V ISA Tests
-│   │   │   ├── rv32ui/               # Base Integer Tests
-│   │   │   ├── rv32si/               # Supervisor Tests
-│   │   │   ├── rv32mi/               # Machine Mode Tests
-│   │   │   └── compliance/           # Compliance Tests
+│   │   ├── unit_tests/
+│   │   │   ├── test_alu.v
+│   │   │   ├── test_regfile.v
+│   │   │   ├── test_decoder.v
+│   │   │   ├── test_cache.v
+│   │   │   └── test_csr.v
 │   │   │
-│   │   ├── directed/
-│   │   │   ├── arithmetic/
-│   │   │   ├── memory/
-│   │   │   ├── branch/
-│   │   │   └── interrupt/
+│   │   ├── isa_tests/
+│   │   │   ├── rv32i_tests/          # Base integer tests
+│   │   │   │   ├── test_add.v
+│   │   │   │   ├── test_load_store.v
+│   │   │   │   ├── test_branch.v
+│   │   │   │   └── test_jump.v
+│   │   │   ├── rv32m_tests/          # Multiply/divide tests
+│   │   │   │   ├── test_mul.v
+│   │   │   │   └── test_div.v
+│   │   │   ├── rv32c_tests/          # Compressed tests (optional)
+│   │   │   └── rv32zicsr_tests/      # CSR tests
 │   │   │
-│   │   ├── random/
-│   │   │   └── riscv_dv/             # Random Instruction Generator
+│   │   ├── integration_tests/
+│   │   │   ├── test_pipeline.v
+│   │   │   ├── test_interrupts.v
+│   │   │   ├── test_exceptions.v
+│   │   │   └── test_cache_coherency.v
 │   │   │
-│   │   └── regression/
-│   │       ├── smoke/                # Quick tests
-│   │       ├── nightly/              # Full regression
-│   │       └── weekly/               # Extended tests
-│   │
-│   ├── uvm/                          # UVM Environment (Preferred)
-│   │   ├── env/
-│   │   │   ├── riscv_env.sv
-│   │   │   ├── riscv_env_cfg.sv
-│   │   │   └── riscv_virtual_sequencer.sv
+│   │   ├── performance_tests/
+│   │   │   ├── test_dhrystone.v
+│   │   │   └── test_coremark.v
 │   │   │
-│   │   ├── agents/
-│   │   │   ├── instruction_agent/
-│   │   │   ├── memory_agent/
-│   │   │   └── interrupt_agent/
-│   │   │
-│   │   ├── sequences/
-│   │   │   ├── base_seq.sv
-│   │   │   ├── riscv_base_seq.sv
-│   │   │   └── test_lib.sv
-│   │   │
-│   │   ├── scoreboards/
-│   │   │   ├── scoreboard.sv
-│   │   │   └── reference_model.sv
-│   │   │
-│   │   ├── coverage/
-│   │   │   ├── instruction_cov.sv
-│   │   │   ├── register_cov.sv
-│   │   │   └── functional_cov.sv
-│   │   │
-│   │   └── tests/
-│   │       └── riscv_base_test.sv
+│   │   └── compliance_tests/         # RISC-V compliance suite
+│   │       ├── rv32ui/
+│   │       ├── rv32um/
+│   │       └── rv32ua/               # Atomic (optional)
 │   │
-│   ├── assertions/
-│   │   ├── cpu_assertions.sv         # SystemVerilog Assertions
-│   │   ├── formal/
-│   │   │   └── properties.sv         # Formal verification properties
-│   │   └── clock_domain_crossing.sv
-│   │
-│   └── models/
-│       ├── iss/                      # Instruction Set Simulator
-│       │   ├── spike_model.py
-│       │   └── riscv_iss.cpp
-│       │
-│       └── performance/
-│           └── cycle_model.py
-│
-├── sw/                               # Software Support
-│   ├── linker/
-│   │   ├── riscv.ld                  # Linker script
-│   │   ├── memory_map.ld
-│   │   └── sections.ld
-│   │
-│   ├── startup/
-│   │   ├── crt0.S                    # Startup assembly
-│   │   ├── vectors.S                 # Exception vectors
-│   │   └── bootloader/               # Optional bootloader
-│   │
-│   ├── tests/
-│   │   ├── hello_world.c
-│   │   ├── exceptions.c
-│   │   ├── interrupt_test.c
-│   │   ├── cache_test.c
-│   │   └── benchmark/
-│   │       ├── coremark/
-│   │       └── dhrystone/
-│   │
-│   ├── lib/
-│   │   ├── stdlib/                   # Standard library
-│   │   ├── drivers/                  # Peripheral drivers
-│   │   └── bsp/                      # Board Support Package
-│   │
-│   └── toolchain/
-│       ├── build.sh
-│       ├── compile.py
-│       └── makefile.common
-│
-├── docs/                             # Documentation (Mandatory)
-│   ├── architecture_spec.md
-│   ├── microarchitecture.md
-│   ├── pipeline_diagram.pdf
-│   ├── isa_support_matrix.md
-│   ├── memory_map.md
-│   ├── verification_plan.md
-│   ├── integration_guide.md
-│   ├── programming_guide.md
-│   ├── performance_numbers.md
-│   ├── known_limitations.md
-│   ├── changelog.md
-│   └── presentations/
-│       └── design_review.pptx
-│
-├── scripts/                          # Build & Automation Scripts
-│   ├── sim/
-│   │   ├── run_iverilog.sh
-│   │   ├── run_verilator.sh
-│   │   ├── run_questa.do
-│   │   ├── run_vcs.sh
-│   │   └── run_xcelium.sh
-│   │
-│   ├── synth/
-│   │   ├── yosys.tcl
-│   │   ├── dc.tcl                    # Design Compiler
-│   │   ├── genus.tcl
-│   │   └── innovus.tcl               # Place & Route
-│   │
-│   ├── lint/
-│   │   ├── verilator_lint.sh
-│   │   ├── spyglass.tcl
-│   │   └── ascent_lint.tcl
-│   │
-│   ├── formal/
-│   │   ├── jasper.tcl
-│   │   └── symbiyosys.tcl
-│   │
-│   ├── power/
-│   │   ├── power_estimation.tcl
-│   │   └── upf/                      # Unified Power Format
-│   │
-│   └── utils/
-│       ├── check_licenses.py
-│       ├── code_format.py
-│       └── generate_docs.py
-│
-├── fpga/                             # FPGA Support
-│   ├── constraints/
-│   │   ├── xdc/                      # Xilinx
-│   │   ├── sdc/                      # Intel/Altera
-│   │   └── pcf/                      # Lattice
-│   │
-│   ├── implementation/
-│   │   ├── vivado/
-│   │   │   └── riscv_fpga.tcl
-│   │   ├── quartus/
-│   │   │   └── riscv_fpga.tcl
-│   │   └── icestorm/
-│   │       └── riscv_fpga.tcl
-│   │
-│   └── boards/
-│       ├── zedboard/
-│       ├── de10_nano/
-│       └── ice40/
-│
-├── asic/                             # ASIC Implementation
-│   ├── constraints/
-│   │   ├── timing.sdc
-│   │   ├── design_constraints.tcl
-│   │   └── floorplan_constraints.tcl
-│   │
-│   ├── floorplan/
-│   │   ├── floorplan.def
-│   │   ├── io.def
-│   │   └── placement.tcl
-│   │
-│   ├── power/
-│   │   ├── power_intent.upf
-│   │   ├── cpft.tcl
-│   │   └── low_power.tcl
-│   │
-│   ├── physical/
-│   │   ├── cts.tcl                   # Clock Tree Synthesis
-│   │   ├── routing.tcl
-│   │   ├── drc.tcl                   # Design Rule Check
-│   │   └── lvs.tcl                   # Layout vs Schematic
-│   │
-│   └── reports/
-│       ├── timing.rpt
-│       ├── area.rpt
-│       ├── power.rpt
-│       └── drc.rpt
-│
-├── quality/                          # Quality Reports
-│   ├── lint/
-│   │   ├── lint_report.txt
-│   │   └── waiver_file.rvl
-│   │
-│   ├── cdc/
-│   │   ├── cdc_report.txt
-│   │   └── cdc_waivers.txt
-│   │
-│   ├── rdc/
-│   │   └── rdc_report.txt
-│   │
-│   ├── synthesis/
-│   │   ├── qor_report.txt            # Quality of Results
-│   │   └── utilization.rpt
+│   ├── models/
+│   │   ├── golden_model/             # Reference model
+│   │   │   ├── riscv_model.v
+│   │   │   ├── instruction_sim.v
+│   │   │   └── memory_model.v
+│   │   └── iss_wrapper/              # ISS interface
+│   │       ├── spike_wrapper.v
+│   │       └── riscv_iss_if.v
 │   │
 │   └── coverage/
-│       ├── functional_cov/
-│       │   └── coverage_report.html
-│       └── code_cov/
-│           └── code_coverage.rpt
+│       ├── functional_cov.v          # Functional coverage (manual)
+│       ├── code_cov.v                # Code coverage hooks
+│       └── assertion_cov.v           # Assertion coverage
 │
-├── .github/                          # CI/CD Automation
-│   └── workflows/
-│       ├── rtl_lint.yml
-│       ├── simulation.yml
-│       ├── regression.yml
-│       ├── synthesis.yml
-│       ├── formal_verification.yml
-│       └── documentation.yml
+├── software/                         # Software Support
+│   ├── boot/
+│   │   ├── bootrom.v                 # Boot ROM RTL
+│   │   ├── bootloader.c              # Bootloader C code
+│   │   └── vectors.S                 # Exception vectors
+│   │
+│   ├── tests/
+│   │   ├── assembly/
+│   │   │   ├── basic_test.S
+│   │   │   ├── interrupt_test.S
+│   │   │   └── exception_test.S
+│   │   ├── c_programs/
+│   │   │   ├── hello_world.c
+│   │   │   ├── fibonacci.c
+│   │   │   ├── matrix_mult.c
+│   │   │   └── sort_test.c
+│   │   └── benchmarks/
+│   │       ├── dhrystone/
+│   │       ├── coremark/
+│   │       └── embench/
+│   │
+│   ├── lib/
+│   │   ├── crt0.S                    # Startup code
+│   │   ├── syscalls.c                # System calls
+│   │   ├── printf.c                  # Minimal printf
+│   │   ├── string.c                  # String functions
+│   │   └── drivers/
+│   │       ├── uart.c
+│   │       ├── gpio.c
+│   │       └── timer.c
+│   │
+│   ├── linker/
+│   │   ├── memory_map.ld             # Memory map
+│   │   ├── sections.ld               # Section placement
+│   │   └── scripts/
+│   │       ├── sim.ld                # Simulation linker script
+│   │       ├── fpga.ld               # FPGA linker script
+│   │       └── asic.ld               # ASIC linker script
+│   │
+│   └── toolchain/
+│       ├── build_tools.sh            # Toolchain setup
+│       ├── compile_script.sh         # Compilation script
+│       └── run_sim.sh                # Simulation run script
 │
-├── docker/                           # Containerization
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   └── scripts/
-│       └── setup_env.sh
+├── docs/                             # Documentation
+│   ├── specification/
+│   │   ├── architecture.md           # Architecture spec
+│   │   ├── microarchitecture.md      # Microarchitecture details
+│   │   ├── pipeline.md               # Pipeline description
+│   │   ├── memory_system.md          # Memory hierarchy
+│   │   ├── interrupt_system.md       # Interrupt handling
+│   │   └── debug_system.md           # Debug features
+│   │
+│   ├── implementation/
+│   │   ├── design_guide.md           # Design guidelines
+│   │   ├── coding_style.md           # Verilog coding style
+│   │   ├── timing_closure.md         # Timing considerations
+│   │   └── area_optimization.md      # Area optimization
+│   │
+│   ├── verification/
+│   │   ├── verification_plan.md      # Verification strategy
+│   │   ├── test_plan.md              # Test plan
+│   │   ├── coverage_plan.md          # Coverage goals
+│   │   └── regression.md             # Regression testing
+│   │
+│   ├── software/
+│   │   ├── programming_guide.md      # Software guide
+│   │   ├── api_reference.md          # Driver APIs
+│   │   ├── boot_sequence.md          # Boot process
+│   │   └── porting_guide.md          # Porting to new platforms
+│   │
+│   ├── integration/
+│   │   ├── fpga_integration.md       # FPGA integration guide
+│   │   ├── asic_integration.md       # ASIC integration guide
+│   │   └── soc_integration.md        # SoC integration guide
+│   │
+│   └── diagrams/                     # Visual documentation
+│       ├── pipeline_diagram.svg
+│       ├── block_diagram.svg
+│       ├── memory_map.svg
+│       └── timing_diagrams/
 │
-├── third_party/                      # External IP/Tools
-│   ├── riscv-opcodes/                # RISC-V Opcodes
-│   ├── riscv-tests/                  # Official test suite
-│   └── bsd/                          # BSD licensed components
+├── scripts/                          # Automation Scripts
+│   ├── simulation/
+│   │   ├── run_simulation.sh         # Generic simulation script
+│   │   ├── run_iverilog.sh           # Icarus Verilog
+│   │   ├── run_verilator.sh          # Verilator
+│   │   ├── run_modelsim.sh           # ModelSim/Questa
+│   │   ├── run_vcs.sh                # VCS
+│   │   └── run_xsim.sh               # Xilinx Vivado Sim
+│   │
+│   ├── synthesis/
+│   │   ├── synth_generic.tcl         # Generic synthesis
+│   │   ├── synth_yosys.tcl           # Yosys synthesis
+│   │   ├── synth_vivado.tcl          # Vivado synthesis
+│   │   ├── synth_quartus.tcl         # Quartus synthesis
+│   │   └── synth_dc.tcl              # Design Compiler
+│   │
+│   ├── lint/
+│   │   ├── run_verilator_lint.sh     # Verilator linting
+│   │   ├── lint_checklist.txt        # Lint checklist
+│   │   └── waiver_file.txt           # Lint waivers
+│   │
+│   ├── formal/
+│   │   ├── formal_setup.tcl          # Formal verification setup
+│   │   ├── property_check.tcl        # Property checking
+│   │   └── equivalence_check.tcl     # Equivalence checking
+│   │
+│   ├── power/
+│   │   ├── power_analysis.tcl        # Power analysis
+│   │   └── clock_gating_insertion.tcl
+│   │
+│   └── utils/
+│       ├── check_code_style.py       # Code style checker
+│       ├── generate_docs.py          # Documentation generator
+│       ├── update_configs.py         # Configuration updater
+│       └── create_release.py         # Release packaging
 │
-└── config/                           # Configuration Files
-    ├── core_config.yml               # Core configuration
-    ├── verification_config.yml
-    ├── synthesis_config.yml
-    └── fpga_config.yml
-    
+├── fpga/                             # FPGA Implementation
+│   ├── constraints/
+│   │   ├── clocks.xdc               # Clock constraints
+│   │   ├── pins.xdc                 # Pin constraints
+│   │   ├── timing.xdc               # Timing exceptions
+│   │   └── area.xdc                 # Area constraints
+│   │
+│   ├── projects/
+│   │   ├── xilinx/
+│   │   │   ├── zynq7000/
+│   │   │   │   └── zedboard/
+│   │   │   ├── artix7/
+│   │   │   │   └── nexys4/
+│   │   │   └── kintex7/
+│   │   │       └── kc705/
+│   │   ├── intel/
+│   │   │   ├── cyclone5/
+│   │   │   │   └── de10_nano/
+│   │   │   └── max10/
+│   │   │       └── de10_lite/
+│   │   ├── lattice/
+│   │   │   └── ice40/
+│   │   │       └── icebreaker/
+│   │   └── quicklogic/
+│   │       └── quickfeather/
+│   │
+│   └── bitstreams/                   # Pre-built bitstreams
+│       ├── README.md
+│       └── versioned/
+│
+├── asic/                             # ASIC Implementation
+│   ├── flow/
+│   │   ├── synthesis/
+│   │   │   ├── constraints.sdc       # Timing constraints
+│   │   │   ├── synthesis.tcl         # Synthesis script
+│   │   │   └── reports/              # Synthesis reports
+│   │   ├── floorplan/
+│   │   │   ├── floorplan.tcl
+│   │   │   ├── io_placement.tcl
+│   │   │   └── power_plan.tcl
+│   │   ├── placement/
+│   │   │   ├── placement.tcl
+│   │   │   ├── optimization.tcl
+│   │   │   └── clock_tree.tcl
+│   │   ├── routing/
+│   │   │   ├── global_route.tcl
+│   │   │   ├── detailed_route.tcl
+│   │   │   └── fill_insertion.tcl
+│   │   └── verification/
+│   │       ├── drc_check.tcl
+│   │       ├── lvs_check.tcl
+│   │       └── timing_signoff.tcl
+│   │
+│   ├── libraries/                    # Technology libraries
+│   │   ├── std_cells.lib
+│   │   ├── memory_compiler.lib
+│   │   └── io_cells.lib
+│   │
+│   └── tapeout/                      # Tapeout files
+│       ├── gds/
+│       ├── lef/
+│       └── verilog_netlist/
+│
+├── config/                           # Configuration Files
+│   ├── core_config.v                 # Core configuration (Verilog)
+│   ├── memory_config.v               # Memory configuration
+│   ├── peripheral_config.v           # Peripheral configuration
+│   ├── test_config.v                 # Test configuration
+│   └── platform_config.v             # Platform configuration
+│
+├── tools/                            # Development Tools
+│   ├── verilog_tools/
+│   │   ├── code_linter/
+│   │   ├── auto_formatter/
+│   │   └── template_generator/
+│   ├── test_tools/
+│   │   ├── test_generator/
+│   │   └── coverage_analyzer/
+│   └── analysis_tools/
+│       ├── power_estimator/
+│       ├── area_analyzer/
+│       └── timing_analyzer/
+│
+└── ci_cd/                           # Continuous Integration
+    ├── Jenkinsfile
+    ├── gitlab-ci.yml
+    ├── workflows/
+    │   ├── lint_check.yml
+    │   ├── simulation_test.yml
+    │   ├── synthesis_check.yml
+    │   └── regression_test.yml
+    └── reports/
+        ├── test_results/
+        ├── coverage_reports/
+        └── quality_metrics/
