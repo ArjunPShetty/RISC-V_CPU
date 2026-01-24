@@ -1,22 +1,4 @@
-# Contributing to RISC-V_CPU
-
-Thank you for your interest in contributing to RISC-V_CPU.
-
-## How to Contribute
-1. Fork the repository
-2. Create a new branch for your feature or fix
-3. Follow existing RTL coding and documentation standards
-4. Add or update testbenches where applicable
-5. Commit with clear and descriptive messages
-6. Submit a pull request
-
-## Coding Guidelines
-- Use synthesizable Verilog/SystemVerilog constructs only
-- Follow synchronous design practices
-- Avoid hard-coded values; use parameters
-- Maintain readability and modularity
-
-## **Complete Files List :**
+## **Complete Files List (21 files):**
 
 ### **1. Configuration & Common Files:**
 1. **`rtl/common/defines.v`** - RISC-V instruction opcodes, ALU operations, branch types, control signals
@@ -82,8 +64,3 @@ Contributors are requested to **keep the project structure up to date** at all t
 * Any **major architectural change or new feature** should be briefly described so that other contributors can easily understand its purpose and usage.
 
 Keeping the project structure and documentation updated helps maintain clarity, improves collaboration, and ensures the project remains accessible to new contributors.
-
-## Reporting Issues
-Please use the GitHub Issues tab to report bugs or request enhancements.
-
-All contributions must comply with the Code of Conduct.
