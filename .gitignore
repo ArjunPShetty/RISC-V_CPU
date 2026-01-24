@@ -1,0 +1,27 @@
+# Build artifacts
+build/
+sim/
+
+# Simulation files
+*.vcd
+*.vvp
+*.out
+
+# Object files
+*.o
+
+# Log files
+*.log
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
