@@ -48,8 +48,7 @@ This repository aims to provide a clean, modular, and extensible RISC-V CPU base
   - Pipeline hazards
   - Verification and testbenches
   - RTL refactoring and cleanup
-- Maintain a scope suitable for **mentored open-source programs** (e.g., GSSoC)
-
+  
 ---
 
 License
