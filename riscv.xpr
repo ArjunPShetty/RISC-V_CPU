@@ -3,7 +3,6 @@
 <!--                                                                         -->
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.                   -->
 <!-- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.   -->
-
 <Project Product="Vivado" Version="7" Minor="68" Path="C:/programming/Codebase/vivado/Single Cycle RISC-V CPU/riscv.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
