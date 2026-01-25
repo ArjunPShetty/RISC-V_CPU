@@ -1,7 +1,6 @@
 # RISC-V_CPU
 
 RISC-V_CPU is an open-source, industry-oriented implementation of a **RISC-V processor core** written in **synthesizable Verilog HDL**.  
-The project is designed to follow **professional RTL design, verification, and documentation practices** suitable for **ASIC and FPGA development**, as well as for educational and research purposes.
 
 This repository aims to provide a clean, modular, and extensible RISC-V CPU baseline that contributors can study, verify, and enhance.
 
@@ -25,16 +24,16 @@ This repository aims to provide a clean, modular, and extensible RISC-V CPU base
 
 ---
 
-## Key Features
+## **Key Features Implemented:**
 
-- Fully synthesizable **Verilog RTL**
-- Clean, modular, and readable design
-- Pipeline-based CPU microarchitecture
-- RV32I instruction support
-- Structured control unit and ALU decoder
-- Verification-ready repository layout
-- Lint-friendly and synthesis-safe coding style
-- Open-source and extensible for future enhancements
+1. **5-stage Pipeline**: IF, ID, EX, MEM, WB
+2. **RV32I ISA Support**: All base integer instructions
+3. **Data Forwarding**: EX→EX and MEM→EX forwarding paths
+4. **Hazard Detection**: Load-use hazard stalling
+5. **Branch Handling**: Basic branch prediction (always-not-taken)
+6. **Memory System**: Byte/halfword/word memory access
+7. **Complete Testbench**: With sample test program
+8. **Build System**: Makefile and simulation scripts
 
 ---
 
@@ -48,7 +47,9 @@ This repository aims to provide a clean, modular, and extensible RISC-V CPU base
   - Pipeline hazards
   - Verification and testbenches
   - RTL refactoring and cleanup
-  
+
+Keeping the project structure and documentation updated helps maintain clarity, improves collaboration, and ensures the project remains accessible to new contributors.
+
 ---
 
 License
@@ -60,6 +61,15 @@ Arjun P Shetty
 Open to collaboration, mentorship, and community contributions.
 
 ---
+
+## Documentation
+Detailed design and verification documents are available in the `docs/` directory.
+
+## Contributing
+Please read `CONTRIBUTING.md` before submitting changes.
+
+## Security
+See `SECURITY.md` for responsible disclosure.
 
 ## Getting Started
 

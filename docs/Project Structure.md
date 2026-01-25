@@ -1,4 +1,4 @@
-## **Complete Files List (21 files):**
+## **Complete Files List :**
 
 ### **1. Configuration & Common Files:**
 1. **`rtl/common/defines.v`** - RISC-V instruction opcodes, ALU operations, branch types, control signals
@@ -40,17 +40,6 @@
 23. **`software/linker/memory_map.ld`** - Linker script for memory mapping
 24. **`.gitignore`** - Git ignore file for build artifacts
 
-## **Key Features Implemented:**
-
-1. **5-stage Pipeline**: IF, ID, EX, MEM, WB
-2. **RV32I ISA Support**: All base integer instructions
-3. **Data Forwarding**: EX→EX and MEM→EX forwarding paths
-4. **Hazard Detection**: Load-use hazard stalling
-5. **Branch Handling**: Basic branch prediction (always-not-taken)
-6. **Memory System**: Byte/halfword/word memory access
-7. **Complete Testbench**: With sample test program
-8. **Build System**: Makefile and simulation scripts
-
 ### Project Structure and Feature Update Policy
 
 Contributors are requested to **keep the project structure up to date** at all times.
@@ -62,5 +51,3 @@ Contributors are requested to **keep the project structure up to date** at all t
   * Relevant documentation (README or docs folder)
   * Comments where applicable
 * Any **major architectural change or new feature** should be briefly described so that other contributors can easily understand its purpose and usage.
-
-Keeping the project structure and documentation updated helps maintain clarity, improves collaboration, and ensures the project remains accessible to new contributors.
