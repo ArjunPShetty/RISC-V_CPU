@@ -52,8 +52,7 @@ Keeping the project structure and documentation updated helps maintain clarity, 
 
 ---
 
-License
-This project is licensed under the MIT License.
+MIT License.
 See the LICENSE file for details.
 
 Maintainer
